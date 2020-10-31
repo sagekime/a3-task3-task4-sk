@@ -1,0 +1,113 @@
+---
+title: "a3_task3_sage_kime"
+author: "Sage Kime"
+date: "10/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+library(lubridate)
+```
+
+## Read in the data & clean names
+
+```{r}
+urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+
+## Section 1: Size comparisons for red and purple urchins
+
+
+#### Exploratory data visualization
+
+```{r}
+ggplot(data = urchins, aes(x = size)) +
+  geom_histogram(color = "purple",
+                 fill = "darkorange") +
+  facet_wrap(~common_name) +
+  labs(x = "Urchin diameter (cm), measured to the nearest 0.5 cm", y = "Frequency of urchin diameter")
+
+```
+
+
+```{r}
+ggplot(data = urchins, aes(x = common_name, y = size)) +
+  geom_boxplot() +
+  labs(x = "Common Name", y = "Urchin diameter (cm)")
+```
+
+
+
+#### Descriptive statistics table
+
+Create a summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable): mean, median, standard deviation, and sample size.
+
+```{r}
+urchins_stats <- urchins %>% 
+  group_by(common_name) %>% 
+  summarize(mean_size = mean(size), median_size = median(size), sd = sd(size), sample_size = n())
+
+urchins_stats %>% 
+  kable(col.names = c("Common Name", "Mean size (cm)", "Median size (cm)", "Standard deviation", "Sample size (n)")) %>% 
+  kable_styling(full_width = FALSE)
+```
+
+
+Below where your exploratory graphs and table appear, add 2 - 3 sentences briefly describing your overall takeaways about how the size (distribution, central tendency, spread, etc.) compare between the two species of urchins (again, here we are ignoring site and treatment as a variable). Help to contextualize any differences you observe - for example, what is the actual and % difference in mean urchin diameter between the species? 
+
+**Takeaways:** Overall, red urchins have a greater standard deviation than purple urchins. This means that the size of read urchins spreads over a larger range of values. I would expect the red urchin distribution curve to be wider than the distribution of the purple urchins because of this larger variability in size. It is interesting to note that the red urchin is 
+
+
+
+## Section 2. Explore purple urchin counts by site and year
+
+#### Purple Urchins subset
+
+In a piped sequence, create stored subset of the urchins data called purple_urchins in which you: 
+
+- Filter to only include observations for purple urchins
+- Convert the date to class “Date” 
+- Create a new column that only contains the year
+- Create a new column called site_full that contains the full name
+
+
+```{r}
+purple_urchins <- urchins %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(date_new = mdy(date)) %>% 
+  mutate(year_new = year(date_new)) %>% 
+  mutate(site_full = case_when(
+    site == "IVEE" ~ "Isla Vista Reef",
+    site == "NAPL" ~ "Naples Reef",
+    site == "AQUE" ~ "Arroyo Quemado Reef",
+    site == "CARP" ~ "Carpinteria Reef",
+    site == "MOHK" ~ "Mohawk Reef"
+  ))
+
+```
+
+
+
+#### Summary table and exploratory graph
+
+```{r}
+purple_summary <- purple_urchins %>% 
+  count(site_full, year_new)
+
+ggplot(data = purple_summary, aes(x = year_new, y = n)) +
+  geom_col(aes(fill = site_full)) +
+  facet_wrap(~site_full) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_binned() +
+  labs(x = "Year", y = "Total Count of Purple Urchins") +
+  theme(legend.position = "none")
+```
+
+
