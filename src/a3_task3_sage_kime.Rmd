@@ -60,9 +60,8 @@ urchins_stats %>%
 ```
 
 
-Below where your exploratory graphs and table appear, add 2 - 3 sentences briefly describing your overall takeaways about how the size (distribution, central tendency, spread, etc.) compare between the two species of urchins (again, here we are ignoring site and treatment as a variable). Help to contextualize any differences you observe - for example, what is the actual and % difference in mean urchin diameter between the species? 
 
-**Takeaways:** Overall, red urchins have a greater standard deviation than purple urchins. This means that the size of read urchins spreads over a larger range of values. I would expect the red urchin distribution curve to be wider than the distribution of the purple urchins because of this larger variability in size. It is interesting to note that the red urchin is 
+**Takeaways:** Overall, red urchins have a greater standard deviation than purple urchins. This means that the size of read urchins has a larger variance and spreads over a larger range of values. I would expect the red urchin distribution curve to be wider than the distribution curve of the purple urchins because of this larger variability in size. It is helpful to note that the red urchin has a mean ~ 2.3 cm larger than the purple urchin - this is a 34% larger mean than the purple urchins which is quite significant. 
 
 
 
@@ -95,6 +94,7 @@ purple_urchins <- urchins %>%
 
 
 
+
 #### Summary table and exploratory graph
 
 ```{r}
@@ -107,7 +107,8 @@ ggplot(data = purple_summary, aes(x = year_new, y = n)) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_x_binned() +
   labs(x = "Year", y = "Total Count of Purple Urchins") +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_x_continuous()
 ```
 
 
